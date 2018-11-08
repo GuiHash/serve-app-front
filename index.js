@@ -43,6 +43,9 @@
     app.set('view engine', 'ejs')
     app.set('views', buildDir)
 
+    console.warn(`${rootDir}/static`)
+    console.warn(`${rootDir}/`)
+
     app.use(`${rootDir}/static`, express.static(`${buildDir}/static`))
     app.use(`${rootDir}/`, express.static(cobrandingDir))
 
