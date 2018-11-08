@@ -16,7 +16,6 @@
     const cobrandingDir = path.join(process.cwd(), 'cobranding', cobranding)
     const buildDir = path.join(process.cwd(), 'build')
     const publicDir = path.join(process.cwd(), 'public')
-    const partialsDir = path.join(cobrandingDir, 'views')
 
     // main.js uri
     const mainUri = require(`${buildDir}/asset-manifest`)['main.js']
@@ -34,14 +33,14 @@
     }
 
     PARTIALS.forEach(name => {
-        const partial = path.join(partialsDir, `${name}.ejs`)
+        const partial = path.join(buildDir, 'views', `${name}.ejs`)
         if (fs.existsSync(partial)) {
             partials[name] = true
         }
     })
 
     app.set('view engine', 'ejs')
-    app.set('views', publicDir)
+    app.set('views', buildDir)
 
     app.use('/static', express.static(`${buildDir}/static`))
     app.use('/', express.static(cobrandingDir))
