@@ -43,8 +43,8 @@
     app.set('view engine', 'ejs')
     app.set('views', buildDir)
 
-    app.use('/static', express.static(`${buildDir}/static`))
-    app.use('/', express.static(cobrandingDir))
+    app.use(`${rootDir}/static`, express.static(`${buildDir}/static`))
+    app.use(`${rootDir}/`, express.static(cobrandingDir))
 
     app.get('*', (req, res) => {
         try {
