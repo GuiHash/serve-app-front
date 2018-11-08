@@ -10,6 +10,7 @@
     const port = process.env.PORT || 3000
     const cobranding = process.env.COBRANDING || 'hubstairs'
     const environment = process.env.ENVIRONMENT || 'local'
+    const rootDir = process.env.ROOTDIR || ''
 
     // define directories
     const cwd = process.cwd()
@@ -51,7 +52,8 @@
                 mainUri,
                 environment,
                 partials,
-                ...placeholders
+                rootDir,
+                ...placeholders,
             });
         }
         catch (e) {
