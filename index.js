@@ -15,6 +15,7 @@
     const cwd = process.cwd()
     const cobrandingDir = path.join(process.cwd(), 'cobranding', cobranding)
     const buildDir = path.join(process.cwd(), 'build')
+    const publicDir = path.join(process.cwd(), 'public')
     const partialsDir = path.join(cobrandingDir, 'views')
 
     // main.js uri
