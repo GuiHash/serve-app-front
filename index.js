@@ -1,72 +1,97 @@
 #!/usr/bin/env node
 
-(function () {
-    const path = require('path')
-    const fs = require('fs')
-    const express = require('express')
-    const app = express()
+(function() {
+  const path = require("path");
+  const fs = require("fs");
+  const express = require("express");
+  const basicAuth = require("express-basic-auth");
+  const app = express();
 
-    // CLI arguments
-    const port = process.env.PORT || 3000
-    const cobranding = process.env.COBRANDING || 'hubstairs'
-    const environment = process.env.ENVIRONMENT || 'local'
-    const rootDir = process.env.ROOTDIR || ''
+  // CLI arguments
+  const port = process.env.PORT || 3000;
+  const cobranding = process.env.COBRANDING || "hubstairs";
+  const environment = process.env.ENVIRONMENT || "local";
+  const rootDir = process.env.ROOTDIR || "";
+  const username = process.env.USERNAME;
+  const password = process.env.PASSWORD;
+  const cache = parseInt(process.env.CACHE || 86400, 10);
 
-    // define directories
-    const cwd = process.cwd()
-    const cobrandingDir = path.join(process.cwd(), 'cobranding', cobranding)
-    const buildDir = path.join(process.cwd(), 'build')
-    const publicDir = path.join(process.cwd(), 'public')
+  // define directories
+  const cwd = process.cwd();
+  const cobrandingDir = path.join(process.cwd(), "cobranding", cobranding);
+  const buildDir = path.join(process.cwd(), "build");
+  const publicDir = path.join(process.cwd(), "public");
 
-    // main.js uri
-    const mainUri = require(`${buildDir}/asset-manifest`)['main.js']
+  // main.js uri
+  const mainUri = require(`${buildDir}/asset-manifest`)["main.js"];
 
-    // placeholders
-    const placeholders = require(`${cobrandingDir}/placeholders.json`)
+  // version
+  const version = require(path.join(cwd, "package.json")).version;
 
-    // partials
-    const PARTIALS = ['headStart', 'headEnd', 'bodyStart', 'bodyEnd']
-    const partials = {
-        headStart: false,
-        headEnd: false,
-        bodyStart: false,
-        bodyEnd: false,
+  // placeholders
+  const placeholders = require(`${cobrandingDir}/placeholders.json`);
+
+  // partials
+  const PARTIALS = ["headStart", "headEnd", "bodyStart", "bodyEnd"];
+  const partials = {
+    headStart: false,
+    headEnd: false,
+    bodyStart: false,
+    bodyEnd: false
+  };
+
+  PARTIALS.forEach(name => {
+    const partial = path.join(buildDir, "views", `${name}.ejs`);
+    if (fs.existsSync(partial)) {
+      partials[name] = true;
     }
+  });
 
-    PARTIALS.forEach(name => {
-        const partial = path.join(buildDir, 'views', `${name}.ejs`)
-        if (fs.existsSync(partial)) {
-            partials[name] = true
-        }
+  app.disable("x-powered-by");
+
+  app.set("view engine", "ejs");
+  app.set("views", buildDir);
+
+  app.use(
+    `${rootDir}/static`,
+    express.static(`${buildDir}/static`, {
+      maxage: cache
     })
+  );
 
-    app.set('view engine', 'ejs')
-    app.set('views', buildDir)
-
-    console.warn(`${rootDir}/static`)
-    console.warn(`${rootDir}/`)
-
-    app.use(`${rootDir}/static`, express.static(`${buildDir}/static`))
-    app.use(`${rootDir}/`, express.static(cobrandingDir))
-
-    app.get('*', (req, res) => {
-        try {
-            res.render('index', {
-                mainUri,
-                environment,
-                partials,
-                rootDir,
-                ...placeholders,
-            });
-        }
-        catch (e) {
-            res.status(500).send(e)
-        }
+  app.use(
+    `${rootDir}/`,
+    express.static(cobrandingDir, {
+      maxage: cache
     })
+  );
 
-    app.listen(port, () => {
-        console.log(`app listening on port : ${port}`)
-        console.log(`app cobranding : ${cobranding}`)
-    })
+  if (username && password) {
+    app.use(
+      basicAuth({
+        users: {[username]: password},
+        challenge: true
+      })
+    );
+  }
 
-})()
+  app.get("*", (req, res) => {
+    try {
+      res.render("index", {
+        mainUri,
+        environment,
+        partials,
+        rootDir,
+        version,
+        ...placeholders
+      });
+    } catch (e) {
+      res.status(500).send(e);
+    }
+  });
+
+  app.listen(port, () => {
+    console.log(`app listening on port : ${port}`);
+    console.log(`app cobranding : ${cobranding}`);
+  });
+})();
