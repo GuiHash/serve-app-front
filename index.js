@@ -6,6 +6,7 @@
   const express = require("express");
   const basicAuth = require("express-basic-auth");
   const app = express();
+  const compression = require("compression");
 
   // CLI arguments
   const port = process.env.PORT || 3000;
@@ -51,6 +52,8 @@
 
   app.set("view engine", "ejs");
   app.set("views", buildDir);
+
+  app.use(compression());
 
   app.use(
     `${rootDir}/static`,
