@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-(function() {
+(function () {
   const path = require("path");
   const fs = require("fs");
   const express = require("express");
@@ -15,37 +15,27 @@
   const rootDir = process.env.ROOTDIR || "";
   const username = process.env.USERNAME;
   const password = process.env.PASSWORD;
-  const cache = parseInt(process.env.CACHE || 86400, 10);
+  const ONE_DAY_IN_SECONDS = 86400; // 60 * 60 * 24
+  const cache = parseInt(process.env.CACHE || ONE_DAY_IN_SECONDS, 10);
 
-  // define directories
-  const cwd = process.cwd();
-  const cobrandingDir = path.join(process.cwd(), "cobranding", cobranding);
-  const buildDir = path.join(process.cwd(), "build");
-  const publicDir = path.join(process.cwd(), "public");
+  const cobrandingDir = path.resolve("cobranding", cobranding);
+  const buildDir = path.resolve("public");
+  const staticDir = path.resolve(buildDir, "static");
 
-  // main.js uri
-  const mainUri = require(`${buildDir}/asset-manifest`)["main.js"];
+  const packageJSONPath = path.resolve("package.json");
+  const assetManifestPath = path.resolve(buildDir, "asset-manifest.json");
+  const placeholdersPath = path.resolve(cobrandingDir, "placeholders.json");
 
-  // version
-  const version = require(path.join(cwd, "package.json")).version;
+  const mainUri = require(assetManifestPath)["main.js"];
+  const version = require(packageJSONPath).version;
+  const placeholders = require(placeholdersPath);
 
-  // placeholders
-  const placeholders = require(`${cobrandingDir}/placeholders.json`);
-
-  // partials
   const PARTIALS = ["headStart", "headEnd", "bodyStart", "bodyEnd"];
-  const partials = {
-    headStart: false,
-    headEnd: false,
-    bodyStart: false,
-    bodyEnd: false
-  };
+  const partials = {};
 
   PARTIALS.forEach(name => {
-    const partial = path.join(buildDir, "views", `${name}.ejs`);
-    if (fs.existsSync(partial)) {
-      partials[name] = true;
-    }
+    const partialFile = path.resolve(buildDir, "views", `${name}.ejs`);
+    partials[name] = fs.existsSync(partialFile);
   });
 
   app.disable("x-powered-by");
@@ -55,24 +45,20 @@
 
   app.use(compression());
 
-  app.use(
-    `${rootDir}/static`,
-    express.static(`${buildDir}/static`, {
-      maxage: cache
-    })
-  );
+  app.use(`${rootDir}/static`, express.static(staticDir, {
+    maxage: cache
+  }));
 
-  app.use(
-    `${rootDir}/`,
-    express.static(cobrandingDir, {
-      maxage: cache
-    })
-  );
+  app.use(`${rootDir}/`, express.static(cobrandingDir, {
+    maxage: cache
+  }));
 
   if (username && username !== "null" && password && password !== "null") {
     app.use(
       basicAuth({
-        users: {[username]: password},
+        users: {
+          [username]: password
+        },
         challenge: true
       })
     );
