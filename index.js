@@ -69,7 +69,7 @@
     })
   );
 
-  if (username && password) {
+  if (username && (username !== '' && username !== 'null') && password && (password !== '' && password !== 'null')) {
     app.use(
       basicAuth({
         users: {[username]: password},
