@@ -19,7 +19,9 @@
   const cache = parseInt(process.env.CACHE || ONE_DAY_IN_SECONDS, 10);
 
   const cobrandingDir = path.resolve("cobranding", cobranding);
-  const buildDir = path.resolve("public");
+  const buildDir = path.resolve("build");
+  const publicDir = path.resolve("public");
+  
   const staticDir = path.join(buildDir, "static");
 
   const packageJSONPath = path.resolve("package.json");
@@ -34,14 +36,14 @@
   const partials = {};
 
   PARTIALS.forEach(name => {
-    const partialFile = path.join(buildDir, "views", `${name}.ejs`);
+    const partialFile = path.join(cobrandingDir, "views", `${name}.ejs`);
     partials[name] = fs.existsSync(partialFile);
   });
 
   app.disable("x-powered-by");
 
   app.set("view engine", "ejs");
-  app.set("views", buildDir);
+  app.set("views", [publicDir, cobrandingDir]);
 
   app.use(compression());
 
