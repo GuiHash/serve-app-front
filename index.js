@@ -20,11 +20,11 @@
 
   const cobrandingDir = path.resolve("cobranding", cobranding);
   const buildDir = path.resolve("public");
-  const staticDir = path.resolve(buildDir, "static");
+  const staticDir = path.join(buildDir, "static");
 
   const packageJSONPath = path.resolve("package.json");
-  const assetManifestPath = path.resolve(buildDir, "asset-manifest.json");
-  const placeholdersPath = path.resolve(cobrandingDir, "placeholders.json");
+  const assetManifestPath = path.join(buildDir, "asset-manifest.json");
+  const placeholdersPath = path.join(cobrandingDir, "placeholders.json");
 
   const mainUri = require(assetManifestPath)["main.js"];
   const version = require(packageJSONPath).version;
@@ -34,7 +34,7 @@
   const partials = {};
 
   PARTIALS.forEach(name => {
-    const partialFile = path.resolve(buildDir, "views", `${name}.ejs`);
+    const partialFile = path.join(buildDir, "views", `${name}.ejs`);
     partials[name] = fs.existsSync(partialFile);
   });
 
