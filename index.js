@@ -50,7 +50,11 @@
   app.use(`${rootDir}/static`, express.static(staticDir, {
     maxage: cache
   }));
-
+  
+  app.use(`${rootDir}/`, express.static(publicDir, {
+    maxage: cache
+  }));
+  
   app.use(`${rootDir}/`, express.static(cobrandingDir, {
     maxage: cache
   }));
