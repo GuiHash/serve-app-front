@@ -15,7 +15,7 @@
   const rootDir = process.env.ROOTDIR || "";
   const username = process.env.USERNAME;
   const password = process.env.PASSWORD;
-  const ONE_DAY_IN_SECONDS = 86400; // 60 * 60 * 24
+  const ONE_DAY_IN_SECONDS = 86400000; // 60 * 60 * 24 * 1000
   const cache = parseInt(process.env.CACHE || ONE_DAY_IN_SECONDS, 10);
 
   const cobrandingDir = path.resolve("cobranding", cobranding);
@@ -23,6 +23,7 @@
   const publicDir = path.resolve("public");
   
   const staticDir = path.join(buildDir, "static");
+  const commonsDir = path.join(buildDir, "commons");
 
   const packageJSONPath = path.resolve("package.json");
   const assetManifestPath = path.join(buildDir, "asset-manifest.json");
@@ -51,7 +52,7 @@
     maxage: cache
   }));
   
-  app.use(`${rootDir}/`, express.static(publicDir, {
+  app.use(`${rootDir}/commons`, express.static(commonsDir, {
     maxage: cache
   }));
   
