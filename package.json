@@ -1,6 +1,6 @@
 {
   "name": "serve-front-app",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "serve contextualize hubstairs front app",
   "main": "index.js",
   "scripts": {
