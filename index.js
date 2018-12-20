@@ -29,7 +29,9 @@
   const assetManifestPath = path.join(buildDir, "asset-manifest.json");
   const placeholdersPath = path.join(cobrandingDir, "placeholders.json");
 
-  const mainUri = require(assetManifestPath)["main.js"];
+  const assets = require(assetManifestPath)
+  const mainUri = assets["main.js"];
+  const runtimeUri = assets["runtime~main.js"];
   const version = require(packageJSONPath).version;
   const placeholders = require(placeholdersPath);
 
@@ -75,6 +77,7 @@
     try {
       res.render("index", {
         mainUri,
+        runtimeUri,
         environment,
         partials,
         rootDir,
