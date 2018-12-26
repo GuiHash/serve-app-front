@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-(function () {
+(function() {
   const path = require("path");
   const fs = require("fs");
   const express = require("express");
@@ -29,7 +29,7 @@
   const assetManifestPath = path.join(buildDir, "asset-manifest.json");
   const placeholdersPath = path.join(cobrandingDir, "placeholders.json");
 
-  const assets = require(assetManifestPath)
+  const assets = require(assetManifestPath);
   const mainUri = assets["main.js"];
   const runtimeUri = assets["runtime~main.js"];
   const version = require(packageJSONPath).version;
@@ -50,17 +50,26 @@
 
   app.use(compression());
 
-  app.use(`${rootDir}/static`, express.static(staticDir, {
-    maxage: cache
-  }));
-  
-  app.use(`${rootDir}/commons`, express.static(commonsDir, {
-    maxage: cache
-  }));
-  
-  app.use(`${rootDir}/`, express.static(cobrandingDir, {
-    maxage: cache
-  }));
+  app.use(
+    `${rootDir}/static`,
+    express.static(staticDir, {
+      maxAge: cache
+    })
+  );
+
+  app.use(
+    `${rootDir}/commons`,
+    express.static(commonsDir, {
+      maxAge: cache
+    })
+  );
+
+  app.use(
+    `${rootDir}/`,
+    express.static(cobrandingDir, {
+      maxAge: cache
+    })
+  );
 
   if (username && username !== "null" && password && password !== "null") {
     app.use(
