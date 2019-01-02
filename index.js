@@ -56,6 +56,7 @@
       maxAge: cache,
       setHeaders: res => {
         res.set('X-Content-Type-Options', 'nosniff');
+        res.set('X-Frame-Options', 'SAMEORIGIN');
       } 
     })
   );
@@ -66,6 +67,7 @@
       maxAge: cache,
       setHeaders: res => {
         res.set('X-Content-Type-Options', 'nosniff');
+        res.set('X-Frame-Options', 'SAMEORIGIN');
       } 
     })
   );
@@ -76,6 +78,7 @@
       maxAge: cache,
       setHeaders: res => {
         res.set('X-Content-Type-Options', 'nosniff');
+        res.set('X-Frame-Options', 'SAMEORIGIN');
       } 
     })
   );
@@ -94,6 +97,7 @@
   app.get("*", (req, res) => {
     try {
       res.set('X-Content-Type-Options', 'nosniff');
+      res.set('X-Frame-Options', 'SAMEORIGIN');
       res.render("index", {
         mainUri,
         runtimeUri,
