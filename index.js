@@ -53,21 +53,30 @@
   app.use(
     `${rootDir}/static`,
     express.static(staticDir, {
-      maxAge: cache
+      maxAge: cache,
+      setHeaders: res => {
+        res.set('X-Content-Type-Options', 'nosniff');
+      } 
     })
   );
 
   app.use(
     `${rootDir}/commons`,
     express.static(commonsDir, {
-      maxAge: cache
+      maxAge: cache,
+      setHeaders: res => {
+        res.set('X-Content-Type-Options', 'nosniff');
+      } 
     })
   );
 
   app.use(
     `${rootDir}/`,
     express.static(cobrandingDir, {
-      maxAge: cache
+      maxAge: cache,
+      setHeaders: res => {
+        res.set('X-Content-Type-Options', 'nosniff');
+      } 
     })
   );
 
@@ -84,6 +93,7 @@
 
   app.get("*", (req, res) => {
     try {
+      res.set('X-Content-Type-Options', 'nosniff');
       res.render("index", {
         mainUri,
         runtimeUri,
