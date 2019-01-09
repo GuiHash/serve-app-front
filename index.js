@@ -49,26 +49,28 @@
   app.set("views", [publicDir, cobrandingDir]);
 
   app.use(compression());
+  
+  const staticConfig = {
+    maxAge: cache,
+    setHeaders: res => {
+      res.set('X-Content-Type-Options', 'nosniff');
+      res.set('X-Frame-Options', 'SAMEORIGIN');
+    }
+  }
 
   app.use(
     `${rootDir}/static`,
-    express.static(staticDir, {
-      maxAge: cache
-    })
+    express.static(staticDir, staticConfig)
   );
 
   app.use(
     `${rootDir}/commons`,
-    express.static(commonsDir, {
-      maxAge: cache
-    })
+    express.static(commonsDir, staticConfig)
   );
 
   app.use(
     `${rootDir}/`,
-    express.static(cobrandingDir, {
-      maxAge: cache
-    })
+    express.static(cobrandingDir, staticConfig)
   );
 
   if (username && username !== "null" && password && password !== "null") {
@@ -84,6 +86,8 @@
 
   app.get("*", (req, res) => {
     try {
+      res.set('X-Content-Type-Options', 'nosniff');
+      res.set('X-Frame-Options', 'SAMEORIGIN');
       res.render("index", {
         mainUri,
         runtimeUri,
