@@ -55,6 +55,7 @@
     setHeaders: res => {
       res.set('X-Content-Type-Options', 'nosniff');
       res.set('X-Frame-Options', 'SAMEORIGIN');
+    }
   }
 
   app.use(
