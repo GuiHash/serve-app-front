@@ -12,7 +12,6 @@
   const port = process.env.PORT || 3000;
   const environment = process.env.ENVIRONMENT || "local";
   const cobrandingRoot = process.env.COBRANDING_ROOT || 'hubstairs'
-  const cobrandingRootFolder = cobrandingRoot === 'hubstairs' ? 'default' : cobrandingRoot
   const cobrandingLocale = process.env.COBRANDING_LOCALE || 'fr-FR'
   const rootDir = process.env.ROOTDIR || "";
   const username = process.env.USERNAME;
@@ -20,7 +19,7 @@
   const ONE_DAY_IN_SECONDS = 86400000; // 60 * 60 * 24 * 1000
   const cache = parseInt(process.env.CACHE || ONE_DAY_IN_SECONDS, 10);
 
-  const cobrandingDir = path.resolve('cobranding', cobrandingRootFolder, cobrandingLocale)
+  const cobrandingDir = path.resolve('cobranding', cobrandingRoot, cobrandingLocale)
   const buildDir = path.resolve("build");
 
   const staticDir = path.join(buildDir, "static");
