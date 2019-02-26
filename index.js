@@ -10,18 +10,19 @@
 
   // CLI arguments
   const port = process.env.PORT || 3000;
-  const cobranding = process.env.COBRANDING || "hubstairs";
   const environment = process.env.ENVIRONMENT || "local";
+  const cobrandingRoot = process.env.COBRANDING_ROOT || 'hubstairs'
+  const cobrandingRootFolder = cobrandingRoot === 'hubstairs' ? 'default' : cobrandingRoot
+  const cobrandingLocale = process.env.COBRANDING_LOCALE || 'fr-FR'
   const rootDir = process.env.ROOTDIR || "";
   const username = process.env.USERNAME;
   const password = process.env.PASSWORD;
   const ONE_DAY_IN_SECONDS = 86400000; // 60 * 60 * 24 * 1000
   const cache = parseInt(process.env.CACHE || ONE_DAY_IN_SECONDS, 10);
 
-  const cobrandingDir = path.resolve("cobranding", cobranding);
+  const cobrandingDir = path.resolve('cobranding', cobrandingRootFolder, cobrandingLocale)
   const buildDir = path.resolve("build");
-  const publicDir = path.resolve("public");
-  
+
   const staticDir = path.join(buildDir, "static");
   const commonsDir = path.join(buildDir, "commons");
 
@@ -46,7 +47,7 @@
   app.disable("x-powered-by");
 
   app.set("view engine", "ejs");
-  app.set("views", [publicDir, cobrandingDir]);
+  app.set("views", [buildDir, cobrandingDir]);
 
   app.use(compression());
   
@@ -104,6 +105,6 @@
 
   app.listen(port, () => {
     console.log(`app listening on port : ${port}`);
-    console.log(`app cobranding : ${cobranding}`);
+    console.log(`app cobranding root : ${cobrandingRoot}, locale: ${cobrandingLocale}`);
   });
 })();
