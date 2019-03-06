@@ -7,6 +7,7 @@
   const basicAuth = require("express-basic-auth");
   const app = express();
   const compression = require("compression");
+  const morgan = require("morgan");
 
   // CLI arguments
   const port = process.env.PORT || 3000;
@@ -43,6 +44,11 @@
     partials[name] = fs.existsSync(partialFile);
   });
 
+  app.use(
+    morgan(
+      ":date[iso] :method :url :status :res[content-length] - :response-time ms"
+    )
+  );
   app.disable("x-powered-by");
 
   app.set("view engine", "ejs");
