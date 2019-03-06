@@ -15,6 +15,7 @@
   const cobrandingRoot = process.env.COBRANDING_ROOT || 'hubstairs'
   const cobrandingLocale = process.env.COBRANDING_LOCALE || 'fr-FR'
   const rootDir = process.env.ROOTDIR || "";
+  const rootDirApp = process.env.ROOTDIR_APP || rootDir;
   const username = process.env.USERNAME;
   const password = process.env.PASSWORD;
   const ONE_DAY_IN_SECONDS = 86400000; // 60 * 60 * 24 * 1000
@@ -99,7 +100,7 @@
         runtimeUri,
         environment,
         partials,
-        rootDir,
+        rootDir: rootDirApp,
         version,
         ...placeholders
       });
