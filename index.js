@@ -8,32 +8,40 @@
   const app = express();
   const compression = require("compression");
   const morgan = require("morgan");
+  const ms = require("ms");
 
   // CLI arguments
   const port = process.env.PORT || 3000;
   const environment = process.env.ENVIRONMENT || "local";
-  const cobrandingRoot = process.env.COBRANDING_ROOT || 'hubstairs'
-  const cobrandingLocale = process.env.COBRANDING_LOCALE || 'fr-FR'
+  const cobrandingRoot = process.env.COBRANDING_ROOT || "hubstairs";
+  const cobrandingLocale = process.env.COBRANDING_LOCALE || "fr-FR";
   const rootDir = process.env.ROOTDIR || "";
   const rootDirApp = process.env.ROOTDIR_APP || rootDir;
   const username = process.env.USERNAME;
   const password = process.env.PASSWORD;
-  const ONE_DAY_IN_SECONDS = 86400000; // 60 * 60 * 24 * 1000
-  const cache = parseInt(process.env.CACHE || ONE_DAY_IN_SECONDS, 10);
+  const ONE_DAY_IN_SECONDS = ms("1 year");
+  const cache = Number(process.env.CACHE || ONE_DAY_IN_SECONDS);
 
-  const cobrandingDir = path.resolve('cobranding', cobrandingRoot, cobrandingLocale)
+  const buildCobrandingDir = path.resolve(
+    "build-cobranding",
+    cobrandingRoot,
+    cobrandingLocale
+  );
+
+  const viewsDir = path.resolve(
+    "build-views",
+    cobrandingRoot,
+    cobrandingLocale
+  );
+
   const buildDir = path.resolve("build");
-
-  const staticDir = path.join(buildDir, "static");
-  const commonsDir = path.join(buildDir, "commons");
 
   const packageJSONPath = path.resolve("package.json");
   const assetManifestPath = path.join(buildDir, "asset-manifest.json");
-  const placeholdersPath = path.join(cobrandingDir, "placeholders.json");
+  const placeholdersPath = path.join(viewsDir, "placeholders.json");
 
   const assets = require(assetManifestPath);
   const mainUri = assets["main.js"];
-  const runtimeUri = assets["runtime~main.js"];
   const version = require(packageJSONPath).version;
   const placeholders = require(placeholdersPath);
 
@@ -41,8 +49,10 @@
   const partials = {};
 
   PARTIALS.forEach(name => {
-    const partialFile = path.join(cobrandingDir, "views", `${name}.ejs`);
-    partials[name] = fs.existsSync(partialFile);
+    const partialFile = path.join(viewsDir, `${name}.ejs`);
+    if (fs.existsSync(partialFile)) {
+      partials[name] = partialFile;
+    }
   });
 
   app.use(
@@ -53,32 +63,20 @@
   app.disable("x-powered-by");
 
   app.set("view engine", "ejs");
-  app.set("views", [buildDir, cobrandingDir]);
+  app.set("views", [viewsDir]);
 
   app.use(compression());
-  
+
   const staticConfig = {
     maxAge: cache,
     setHeaders: res => {
-      res.set('X-Content-Type-Options', 'nosniff');
-      res.set('X-Frame-Options', 'SAMEORIGIN');
+      res.set("X-Content-Type-Options", "nosniff");
+      res.set("X-Frame-Options", "SAMEORIGIN");
     }
-  }
+  };
 
-  app.use(
-    `${rootDir}/static`,
-    express.static(staticDir, staticConfig)
-  );
-
-  app.use(
-    `${rootDir}/commons`,
-    express.static(commonsDir, staticConfig)
-  );
-
-  app.use(
-    `${rootDir}/`,
-    express.static(cobrandingDir, staticConfig)
-  );
+  app.use(`${rootDir}/`, express.static(buildCobrandingDir, staticConfig));
+  app.use(`${rootDir}/`, express.static(buildDir, staticConfig));
 
   if (username && username !== "null" && password && password !== "null") {
     app.use(
@@ -93,11 +91,10 @@
 
   app.get("*", (req, res) => {
     try {
-      res.set('X-Content-Type-Options', 'nosniff');
-      res.set('X-Frame-Options', 'SAMEORIGIN');
+      res.set("X-Content-Type-Options", "nosniff");
+      res.set("X-Frame-Options", "SAMEORIGIN");
       res.render("index", {
         mainUri,
-        runtimeUri,
         environment,
         partials,
         rootDir: rootDirApp,
@@ -111,6 +108,8 @@
 
   app.listen(port, () => {
     console.log(`app listening on port : ${port}`);
-    console.log(`app cobranding root : ${cobrandingRoot}, locale: ${cobrandingLocale}`);
+    console.log(
+      `app cobranding root : ${cobrandingRoot}, locale: ${cobrandingLocale}`
+    );
   });
 })();
