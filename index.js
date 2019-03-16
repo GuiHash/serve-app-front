@@ -19,7 +19,7 @@
   const rootDirApp = process.env.ROOTDIR_APP || rootDir;
   const username = process.env.USERNAME;
   const password = process.env.PASSWORD;
-  const ONE_DAY_IN_SECONDS = ms("1 year");
+  const ONE_DAY_IN_SECONDS = ms("1 day");
   const cache = Number(process.env.CACHE || ONE_DAY_IN_SECONDS);
 
   const buildCobrandingDir = path.resolve(
