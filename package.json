@@ -1,6 +1,6 @@
 {
   "name": "serve-front-app",
-  "version": "1.0.3",
+  "version": "2.0.0-0",
   "description": "serve contextualize hubstairs front app",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,7 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "express-basic-auth": "^1.1.6",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "ms": "^2.1.1"
   }
 }
